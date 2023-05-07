@@ -1,9 +1,9 @@
 # datalogger
-Libraries:
-  DHT sensor library​
-    by Adafruit​
+#Libraries:
+##  DHT sensor library​
+###    by Adafruit​
 
-  WiFi client​
+##  WiFi client​
 
-  MySQL Connector Arduino​
-    by Dr. Charles Bell
+##  MySQL Connector Arduino​
+###    by Dr. Charles Bell
