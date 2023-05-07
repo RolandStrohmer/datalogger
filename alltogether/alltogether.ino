@@ -1,5 +1,5 @@
 #include "DHT.h"
-
+#define DEBUG
 #define DHTPIN 2  // Digital pin connected to the DHT sensor
 // Feather HUZZAH ESP8266 note: use pins 3, 4, 5, 12, 13 or 14 --
 // Pin 15 can work but DHT must be disconnected during program upload.
@@ -50,6 +50,8 @@ char password[] = "secure";              // MySQL user login password
 char ssid[] = "WLAN_Strohmer";  // your SSID
 char pass[] = "TGM123456";      // your SSID Password
 
+
+
 char sensorName[] = "TestSensor";
 char INSERT_DATA[] = "INSERT INTO `DataLogger`.`Datensammlung`(`Sensor`, `Wert`, `Einheit`) VALUES ('%s','%f','%s');";
 char query[128];
@@ -80,13 +82,6 @@ void setup() {
     Serial.println(ip);
   }
   // End WiFi section
-
-  Serial.println("Connecting...");
-  if (conn.connect(server_addr, 3306, user, password)) {
-    delay(1000);
-  } else
-    Serial.println("Connection failed.");
-  conn.close();
 }
 
 void loop() {
@@ -113,8 +108,8 @@ void loop() {
   Serial.print(hic);
   Serial.println(F("°C "));
 
-  if (conn.connect(server_addr, 3306, user, password)) {
-    delay(1000);
+
+  if (conn.connected()) {
     MySQL_Cursor *cur_mem = new MySQL_Cursor(&conn);
     // Save
     sprintf(query, INSERT_DATA, sensorName, t, "°C");
@@ -126,8 +121,15 @@ void loop() {
     delete cur_mem;
     Serial.println("Data recorded.");
   } else {
-    Serial.println("Connection failed.");
     conn.close();
+    Serial.println("Connecting...");
+    if (conn.connect(server_addr, 3306, user, password)) {
+      delay(500);
+      Serial.println("Successful reconnect!");
+    } else {
+      Serial.println("Cannot reconnect! Drat.");
+    }
   }
+
   delay(10000);
 }
